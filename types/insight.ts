@@ -9,3 +9,12 @@ export interface Influencer {
   engagementAvg: number
 }
 
+interface Candidate {
+  name: string
+  value: number
+}
+
+export interface Insight {
+  'topInfluencersPerCategoryByFollowers': {[key: string]: Candidate};
+  'topInfluencersPerCountryByEngagementAvg': {[key: string]: Candidate};
+}

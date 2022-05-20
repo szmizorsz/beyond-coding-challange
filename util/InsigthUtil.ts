@@ -1,7 +1,7 @@
 import { createInterface } from "readline";
 import { createReadStream } from "fs";
 import { once } from "events";
-import { Influencer } from '../types/insight'
+import { Influencer, Insight } from '../types/insight'
 
 export async function createInsightFromInfluencerFile() {
   try {
@@ -10,15 +10,26 @@ export async function createInsightFromInfluencerFile() {
       crlfDelay: Infinity,    
     });
 
+    const insight: Insight = {
+      'topInfluencersPerCategoryByFollowers': {},
+      'topInfluencersPerCountryByEngagementAvg': {}
+    }
+
+    let lineNumber = 0;
     readline.on('line', (line) => {
-      const influencer = parseLine(line)
-      console.log(`Line from file: ${line}`);
-      console.log(`Influencer from line: ${JSON.stringify(influencer)}`);
+      if (lineNumber !== 0) {
+        const influencer = parseLine(line)
+        console.log(`Line from file: ${line}`);
+        console.log(`Influencer from line: ${JSON.stringify(influencer)}`);
+        evaluateInfluencer(influencer, insight);
+      }
+      lineNumber++;
     });
 
     await once(readline, 'close');
 
     console.log("processing finished")
+    console.log(JSON.stringify(insight))
   } catch (error) {
     console.error(error);
   }
@@ -46,5 +57,18 @@ function parseNumber(encodedNumber: string): number {
       return parseFloat(encodedNumber) * 1000000;
     default:
       return parseFloat(encodedNumber);
+  }
+}
+
+
+function evaluateInfluencer(influencer: Influencer, insight: Insight) {
+  if (insight.topInfluencersPerCategoryByFollowers[influencer.category1] === undefined) {
+    insight.topInfluencersPerCategoryByFollowers[influencer.category1] = {
+      name: influencer.instaUserName,
+      value: influencer.followers
+    }
+  } else if (influencer.followers > insight.topInfluencersPerCategoryByFollowers[influencer.category1].value) {
+    insight.topInfluencersPerCategoryByFollowers[influencer.category1].name = influencer.instaUserName;
+    insight.topInfluencersPerCategoryByFollowers[influencer.category1].value = influencer.followers;
   }
 }
