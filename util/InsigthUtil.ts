@@ -1,9 +1,9 @@
 import { createInterface } from "readline";
 import { createReadStream } from "fs";
 import { once } from "events";
-import { Influencer, Insight } from '../types/insight'
+import { Influencer, Insight, InsightResponse } from '../types/insight'
 
-export async function createInsightFromInfluencerFile() {
+export async function createInsightFromInfluencerFile(): Promise<InsightResponse> {
   try {
     const readline = createInterface({
       input: createReadStream('./data/instagram_influencers.csv'),
@@ -19,8 +19,6 @@ export async function createInsightFromInfluencerFile() {
     readline.on('line', (line) => {
       if (lineNumber !== 0) {
         const influencer = parseLine(line)
-        console.log(`Line from file: ${line}`);
-        console.log(`Influencer from line: ${JSON.stringify(influencer)}`);
         evaluateInfluencer(influencer, insight);
       }
       lineNumber++;
@@ -28,10 +26,10 @@ export async function createInsightFromInfluencerFile() {
 
     await once(readline, 'close');
 
-    console.log("processing finished")
-    console.log(JSON.stringify(insight))
+    return {insight}
   } catch (error) {
     console.error(error);
+    return {error: 'failed to process influencer file'}
   }
 }
 

@@ -18,3 +18,8 @@ export interface Insight {
   'topInfluencersPerCategoryByFollowers': {[key: string]: Candidate};
   'topInfluencersPerCountryByEngagementAvg': {[key: string]: Candidate};
 }
+
+export interface InsightResponse {
+  insight?: Insight
+  error?: string
+}
