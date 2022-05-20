@@ -69,4 +69,14 @@ function evaluateInfluencer(influencer: Influencer, insight: Insight) {
     insight.topInfluencersPerCategoryByFollowers[influencer.category1].name = influencer.instaUserName;
     insight.topInfluencersPerCategoryByFollowers[influencer.category1].value = influencer.followers;
   }
+
+  if (insight.topInfluencersPerCountryByEngagementAvg[influencer.country] === undefined) {
+    insight.topInfluencersPerCountryByEngagementAvg[influencer.country] = {
+      name: influencer.instaUserName,
+      value: influencer.engagementAvg
+    }
+  } else if (influencer.engagementAvg > insight.topInfluencersPerCountryByEngagementAvg[influencer.country].value) {
+    insight.topInfluencersPerCountryByEngagementAvg[influencer.country].name = influencer.instaUserName;
+    insight.topInfluencersPerCountryByEngagementAvg[influencer.country].value = influencer.engagementAvg;
+  }  
 }
